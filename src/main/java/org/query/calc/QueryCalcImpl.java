@@ -67,7 +67,7 @@ public class QueryCalcImpl implements QueryCalc {
 		parsedRows.stream().map(row -> row[0].split(" ")).
 		map(arr->{double[] myDoubleArray = {Double.parseDouble(arr[0]),Double.parseDouble(arr[1]) };return myDoubleArray; }).forEach(d->t3Repository.save(new T3(null, d[0], d[1])));
 
-		t3Repository.findAll();
+		t1Repository.findAll();
 		List<Projection> list = t1Repository.extractResults();	
 						
 		List<List<String>> result1 =list.stream().map(r-> List.of(r.getA()+" "+r.getS())).collect(Collectors.toList());
