@@ -20,8 +20,7 @@ public interface T1Repository extends JpaRepository<T1, Long> {
 	List <Projection>extractResults();
 	
 	
-	public interface Projection{
-		
+	public interface Projection{		
 		public Double getA();
 		public Double getS() ;
 	}

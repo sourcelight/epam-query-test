@@ -107,6 +107,19 @@ ORDER BY s DESC) ex
 where rownum <=10;
 
 
+-- query evolutions
+
+select a , s from 
+(select r.a a, r.s s from 
+(SELECT  p.a a, COALESCE(sum(p.x * p.y * p.z ),0) s  FROM
+(select * from t1 u1 LEFT OUTER JOIN  (select u2.b ,u2.y, u3.c,u3.z from t2 u2, t3 u3) d 
+on (u1.a - d.b + d.c < 0) ) p group BY p.a ) r
+ORDER BY s DESC) ex 
+where rownum <=10;
+
+--select * from table(dbms_xplan.display_cursor());
+
+
 --questions:
 1)The other joins are full outer join without any common attribute ?
 2)Should I use an embedded DB or an external ?

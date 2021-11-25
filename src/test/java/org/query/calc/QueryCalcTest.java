@@ -7,15 +7,19 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
+import org.query.repository.T1Repository;
+import org.query.repository.T2Repository;
+import org.query.repository.T3Repository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,25 +27,33 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-
-@SpringBootTest
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class ,
-		classes = {QueryConfiguration.class,QueryCalcImpl.class} )		
+		classes = {QueryCalcImpl.class} )		
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "org.query.repository")
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-@EntityScan(basePackages = "org.query")
+@EntityScan(basePackages = "org.query.model.entity")
 @PropertySource("classpath:application.properties")
 public class QueryCalcTest {
+	
+	@Autowired
+	@Qualifier("t1Repository")
+	private T1Repository t1Repository;
+	
+	@Autowired
+	@Qualifier("t2Repository")
+	private T2Repository t2Repository;
+	
+	@Autowired
+	@Qualifier("t3Repository")
+	private T3Repository t3Repository;
 		
 	
 	
 	@Autowired	
 	private QueryCalc queryCalc;
-	
-	
 
     public void doTest(String testName, QueryCalc queryCalc, String caseName) throws IOException, URISyntaxException {
         TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -66,6 +78,14 @@ public class QueryCalcTest {
             actualResultFile.delete();
             temporaryFolder.delete();
         }
+    }
+    
+    
+    @BeforeEach
+    public void executedBeforeEach() {       
+        t1Repository.deleteAll();
+        t2Repository.deleteAll();
+        t3Repository.deleteAll();
     }
 
     @Test

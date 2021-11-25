@@ -53,34 +53,34 @@ public class QueryCalcImpl implements QueryCalc {
     public void select(Path t1, Path t2, Path t3, Path output) throws IOException {
 		
 		List<String[]> parsedRows = null;
-   	
+		
+		//loading data files from file t1 in table T1
 		parsedRows = loadTables(t1);		
 		parsedRows.stream().map(row -> row[0].split(" ")).
 		map(arr->{double[] myDoubleArray = {Double.parseDouble(arr[0]),Double.parseDouble(arr[1]) };return myDoubleArray; }).forEach(d->t1Repository.save(new T1(null, d[0], d[1])));
 		
+		//loading data files from file t2 in table T2
 		parsedRows = loadTables(t2);		
 		parsedRows.stream().map(row -> row[0].split(" ")).
 		map(arr->{double[] myDoubleArray = {Double.parseDouble(arr[0]),Double.parseDouble(arr[1]) };return myDoubleArray; }).forEach(d->t2Repository.save(new T2(null, d[0], d[1])));
 
-		
+		//loading data files from file t3 in table T3
 		parsedRows = loadTables(t3);		
 		parsedRows.stream().map(row -> row[0].split(" ")).
 		map(arr->{double[] myDoubleArray = {Double.parseDouble(arr[0]),Double.parseDouble(arr[1]) };return myDoubleArray; }).forEach(d->t3Repository.save(new T3(null, d[0], d[1])));
 
-		t1Repository.findAll();
+		//Extracting result data from DB
 		List<Projection> list = t1Repository.extractResults();	
-						
-		List<List<String>> result1 =list.stream().map(r-> List.of(r.getA()+" "+r.getS())).collect(Collectors.toList());
-		result1.add(0, Arrays.asList(""+list.size()));
 		
+		//Converting data in a format to be quicker elaborated from the univocity library
+		List<List<String>> elaboratedData =list.stream().map(r-> List.of(r.getA()+" "+r.getS())).collect(Collectors.toList());
+		elaboratedData.add(0, Arrays.asList(""+list.size()));
+		
+		//Writing the elaborated data in the temporary file
 		CsvWriter csvWriter = new CsvWriter(output.toFile(), new CsvWriterSettings());
-		csvWriter.writeRowsAndClose(result1);
+		csvWriter.writeRowsAndClose(elaboratedData);
 		
-		System.out.println("trest");		
-			
-			
-//			t1Repository.save(new T1(null, d[0], d[1]));
-
+		
 		//verify spring boot reads from application.properties
 		//try to get a better generic method to extracts data
     	//read the files
