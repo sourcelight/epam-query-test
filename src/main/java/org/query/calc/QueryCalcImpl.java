@@ -74,8 +74,9 @@ public class QueryCalcImpl implements QueryCalc {
 		//Extracting result data from DB
 		List<Projection> list = t1Repository.extractResults();	
 		
+		StringBuffer sb = new StringBuffer();
 		//Converting data in a format to be quicker elaborated from the univocity library
-		List<List<String>> elaboratedData =list.stream().map(r-> List.of(r.getA()+" "+r.getS())).collect(Collectors.toList());
+		List<List<String>> elaboratedData =list.stream().map(r-> {sb.delete(0, sb.length()) ; sb.append(r.getA()).append(" ").append(r.getS());return List.of(sb.toString());}).collect(Collectors.toList());
 		elaboratedData.add(0, Arrays.asList(""+list.size()));
 		
 		//Writing the elaborated data in the temporary file
